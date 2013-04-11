@@ -20,7 +20,6 @@
 int GLCanvas::mouseButton;
 int GLCanvas::mouseX;
 int GLCanvas::mouseY;
-//int GLCanvas::display_list_index;
 ArgParser* GLCanvas::args;
 Mesh* GLCanvas::mesh;
 Camera* GLCanvas::camera;
@@ -233,47 +232,19 @@ void GLCanvas::idle() {
 
 void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
   switch (key) {
-  case 'd': case 'D': 
+  case 'd': case 'D': case ' ': 
     mesh->displaceVertices();
-    mesh->setupVBOs();
-    break;
-  case 'b': case 'B':
-    args->bounding_box = !args->bounding_box;
-    mesh->setupVBOs();
-    break;
-  case 'g': case 'G':
-    args->geometry = !args->geometry;
-    mesh->setupVBOs();
-    break;
-  case 'm': case 'M':
-    args->mirror = !args->mirror;
-    mesh->setupVBOs();
-    break;
-  case 'r': case 'R':
-    args->reflected_geometry = !args->reflected_geometry;
-    mesh->setupVBOs();
-    break;
-  case 's': case 'S':
-    args->shadow = !args->shadow;
-    mesh->setupVBOs();
-    break;
-  case 'e': case 'E':
-    args->silhouette_edges = !args->silhouette_edges;
-    mesh->setupVBOs();
-    break;
-  case 'p': case 'P':
-    args->shadow_polygons = !args->shadow_polygons;
     mesh->setupVBOs();
     break;
   case 'a': case 'A':
     animate = !animate;
     break;
-  case ' ':
-    args->timer += 0.1;
-    mesh->setupVBOs();
-    break;
-  case 'n': case 'N':
-    args->gouraud_normals = !args->gouraud_normals;
+  case 'r': case 'R':
+    delete mesh;
+    args->timer = 0.0;
+    mesh = new Mesh(args);
+    mesh->Load();
+    mesh->initializeVBOs();
     mesh->setupVBOs();
     break;
   case 'x': case 'X':

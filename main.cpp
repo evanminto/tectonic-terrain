@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
   ArgParser *args = new ArgParser(argc, argv);
   Mesh *mesh = new Mesh(args);
   mesh->Load();
-  mesh->ComputeGouraudNormals();
 
   glutInit(&argc,argv);
   GLCanvas::initialize(args,mesh); 

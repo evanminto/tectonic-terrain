@@ -182,30 +182,6 @@ Vec3f ComputeNormal(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3) {
   return normal;
 }
 
-// compute the gouraud normals of all vertices of the mesh and store at each vertex
-void Mesh::ComputeGouraudNormals() {
-  int i;
-  // clear the normals
-  for (i = 0; i < numVertices(); i++) {
-    getVertex(i)->clearGouraudNormal();
-  }
-  // loop through all the triangles incrementing the normal at each vertex
-  for (triangleshashtype::iterator iter = triangles.begin();
-       iter != triangles.end(); iter++) {
-    Triangle *t = iter->second;
-    Vec3f n = ComputeNormal((*t)[0]->getPos(),
-			    (*t)[1]->getPos(),
-			    (*t)[2]->getPos());
-    (*t)[0]->incrGouraudNormal(n);
-    (*t)[1]->incrGouraudNormal(n);
-    (*t)[2]->incrGouraudNormal(n);
-  }
-  // finally, normalize the sum at each vertex
-  for (i = 0; i < numVertices(); i++) {
-    getVertex(i)->normalizeGouraudNormal();
-  }
-}
-
 // =================================================================
 
 void Mesh::displaceVertices() {

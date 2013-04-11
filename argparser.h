@@ -29,7 +29,8 @@ public:
 		 !strcmp(argv[i],"-f")) {
 	i++; assert (i < argc); 
 	fragment_shader_filename = std::string(argv[i]);
-      } else if (!strcmp(argv[i],"-size")) {
+      } else if (!strcmp(argv[i],"-size") ||
+                 !strcmp(argv[i],"-s")) {
 	i++; assert (i < argc); 
 	width = height = atoi(argv[i]);
       } else if (!strcmp(argv[i],"-t")) {
@@ -48,14 +49,6 @@ public:
     fragment_shader_filename = "";
     width = 600;
     height = 600;
-    mirror = false;
-    shadow = false;
-    geometry = true;
-    reflected_geometry = false;
-    bounding_box = false;
-    silhouette_edges = false;
-    shadow_polygons = false;
-    gouraud_normals = false;
     glsl_enabled = false;
     glsl_initialized = false;
     timer = 0.0;
@@ -71,14 +64,6 @@ public:
   std::string vertex_shader_filename;
   int width;
   int height;
-  bool shadow;
-  bool mirror;
-  bool geometry;
-  bool reflected_geometry;
-  bool bounding_box;
-  bool silhouette_edges;
-  bool shadow_polygons;
-  bool gouraud_normals;
   bool glsl_enabled;
   bool glsl_initialized;
   float timer;
