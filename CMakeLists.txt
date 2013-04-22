@@ -14,6 +14,7 @@ add_executable(render
   load_shaders.cpp
   boundingbox.cpp
   vertex.cpp
+  bmp.cpp
   argparser.h
   camera.h
   glCanvas.h
@@ -26,6 +27,7 @@ add_executable(render
   mesh.h
   vectors.h
   vbo_structs.h
+  bmp.h
 )
 
 # platform specific compiler flags to output all compiler warnings

@@ -70,6 +70,8 @@ private:
   void DrawLight();
   void DrawMesh();
 
+  void TextureInit();
+
   // ==============
   // REPRESENTATION
   ArgParser *args;

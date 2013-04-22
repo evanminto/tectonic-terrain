@@ -195,7 +195,7 @@ void Mesh::displaceVertices() {
   dis[6] = 0.000;
   dis[7] = 0.005;
 
-  for (int i = 0; i < numVertices(); i++) {
+  for (int i = 0; i < 8; i++) {
     getVertex(i)->displace(dis[i]*args->timestep/200.0);
   }
 }

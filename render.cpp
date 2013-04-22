@@ -4,6 +4,7 @@
 #include "vertex.h"
 #include "triangle.h"
 #include "argparser.h"
+#include "bmp.h"
 
 Vec3f floor_color(0.9,0.8,0.7);
 Vec3f mesh_color(1,1,1);
@@ -71,6 +72,21 @@ void Mesh::SetupMesh() {
 	       GL_STATIC_DRAW); 
 }
 
+void Mesh::TextureInit() {
+  glEnable(GL_TEXTURE_2D);
+  glGenTextures(1, texture);
+  BitMapFile *image[1];
+  image[0] = getBMPData("../tectonic-terrain/test16.bmp");
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture[0]);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image[0]->sizeX, image[0]->sizeY, 0, 
+               GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
+}
+
 // ================================================================================
 // ================================================================================
 
@@ -108,6 +124,7 @@ void Mesh::setupVBOs() {
   cleanupVBOs();
   // setup the new geometry
   Vec3f light_position = LightPosition();
+  TextureInit();
   SetupLight(light_position);
   SetupMesh();
   bbox.setupVBOs();
@@ -129,7 +146,11 @@ void Mesh::drawVBOs() {
   // Render Mesh 
   InsertColor(mesh_color);
   if (args->glsl_enabled) {
-      glUseProgramObjectARB(GLCanvas::program);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    GLint mapLoc = glGetUniformLocation(GLCanvas::program, "terrainMap");
+    glUseProgramObjectARB(GLCanvas::program);
+    glUniform1i(mapLoc, 0);
   }
   DrawMesh();
   if (args->glsl_enabled) {

@@ -46,6 +46,7 @@ void LinkProgram(GLhandleARB program) {
   HandleGLError("Failed glLinkProgramARB");
   glGetObjectParameterivARB(program,GL_OBJECT_LINK_STATUS_ARB,&linked);
   glGetObjectParameterivARB(program,GL_OBJECT_INFO_LOG_LENGTH_ARB,&logLength);
+
   if (logLength) {
     GLint charsWritten;
     GLcharARB *log = (GLcharARB*)malloc(logLength+128);
@@ -80,7 +81,8 @@ void GLCanvas::InitShaders() {
   glAttachObjectARB(program,vertex_shader);
   glAttachObjectARB(program,fragment_shader);
   HandleGLError("Failed to attach shaders to program");
-}
+
+}  
 
 void GLCanvas::LoadCompileLinkShaders() {
   std::cout << "load, compile, & link shaders" << std::endl;
@@ -91,6 +93,6 @@ void GLCanvas::LoadCompileLinkShaders() {
   CompileProgram(v, &vertex_shader);
   CompileProgram(f, &fragment_shader);
   LinkProgram(program);
-  HandleGLError("Failed to compile or link shaders");
+  HandleGLError("Failed to compile or link shaders");  
 }
 
