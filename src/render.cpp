@@ -61,13 +61,14 @@ void Mesh::SetupMesh() {
     Vec3f na = ComputeNormal(a,b,c);
     Vec3f nb = na;
     Vec3f nc = na;
-    mesh_tri_verts.push_back(VBOPosNormal(a,na));
-    mesh_tri_verts.push_back(VBOPosNormal(b,nb));
-    mesh_tri_verts.push_back(VBOPosNormal(c,nc));
+    Vec3f color = mesh_color;
+    mesh_tri_verts.push_back(VBOPosNormalColorTexture(a,na,color,a.x()*1,a.z()*-1));
+    mesh_tri_verts.push_back(VBOPosNormalColorTexture(b,nb,color,b.x()*1,b.z()*-1));
+    mesh_tri_verts.push_back(VBOPosNormalColorTexture(c,nc,color,c.x()*1,c.z()*-1));
   }
   glBindBuffer(GL_ARRAY_BUFFER,mesh_tri_verts_VBO); 
   glBufferData(GL_ARRAY_BUFFER,
-	       sizeof(VBOPosNormal) * numTriangles() * 3,
+	       sizeof(VBOPosNormalColorTexture) * numTriangles() * 3,
 	       &mesh_tri_verts[0],
 	       GL_STATIC_DRAW); 
 }
@@ -79,6 +80,7 @@ void Mesh::TextureInit() {
   image[0] = getBMPData("test16.bmp");
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture[0]);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
@@ -106,10 +108,22 @@ void Mesh::DrawMesh() {
     assert ((int)mesh_tri_verts.size() == numTriangles()*3);
   glBindBuffer(GL_ARRAY_BUFFER, mesh_tri_verts_VBO);
   glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(VBOPosNormal), BUFFER_OFFSET(0));
+  glVertexPointer(3, GL_FLOAT, sizeof(VBOPosNormalColorTexture), BUFFER_OFFSET(0));
   glEnableClientState(GL_NORMAL_ARRAY);
-  glNormalPointer(GL_FLOAT, sizeof(VBOPosNormal), BUFFER_OFFSET(12));
+  glNormalPointer(GL_FLOAT, sizeof(VBOPosNormalColorTexture), BUFFER_OFFSET(12));
+  glEnableClientState(GL_COLOR_ARRAY);
+  glColorPointer(3, GL_FLOAT, sizeof(VBOPosNormalColorTexture), BUFFER_OFFSET(24));
+
+  // Texture
+  glEnable(GL_TEXTURE_2D);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glTexCoordPointer( 2, GL_FLOAT, sizeof(VBOPosNormalColorTexture), BUFFER_OFFSET(36));
+  
   glDrawArrays(GL_TRIANGLES,0,numTriangles()*3);
+  
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisable(GL_TEXTURE_2D);
+  glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
 }

@@ -86,7 +86,7 @@ private:
   GLuint mesh_tri_verts_VBO;
   GLuint light_vert_VBO;
 
-  std::vector<VBOPosNormal> mesh_tri_verts; 
+  std::vector<VBOPosNormalColorTexture> mesh_tri_verts; 
   std::vector<VBOPos> light_vert;
 };
 
