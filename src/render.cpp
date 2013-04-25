@@ -75,18 +75,34 @@ void Mesh::SetupMesh() {
 
 void Mesh::TextureInit() {
   glEnable(GL_TEXTURE_2D);
-  glGenTextures(1, texture);
-  BitMapFile *image[1];
+
+  // Generate and load textures
+  glGenTextures(2, texture);
+  BitMapFile *image[2];
   image[0] = getBMPData("test16.bmp");
-  glActiveTexture(GL_TEXTURE0);
+  image[1] = getBMPData("stone.bmp");
+
+  // Set Texture 0
   glBindTexture(GL_TEXTURE_2D, texture[0]);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image[0]->sizeX, image[0]->sizeY, 0, 
                GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
+
+  
+  // Set Texture 1
+  glBindTexture(GL_TEXTURE_2D, texture[1]);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image[1]->sizeX, image[1]->sizeY, 0, 
+               GL_RGB, GL_UNSIGNED_BYTE, image[1]->data);
+
+  glDisable(GL_TEXTURE_2D);
 }
 
 // ================================================================================
@@ -160,11 +176,12 @@ void Mesh::drawVBOs() {
   // Render Mesh 
   InsertColor(mesh_color);
   if (args->glsl_enabled) {
+    glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
-    //GLint mapLoc = glGetUniformLocation(GLCanvas::program, "terrainMap");
     glUseProgramObjectARB(GLCanvas::program);
-    //glUniform1i(mapLoc, 0);
+    GLint mapLoc = glGetUniformLocationARB(GLCanvas::program, "terrainMap");
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glUniform1iARB(mapLoc, 0);
   }
   DrawMesh();
   if (args->glsl_enabled) {
