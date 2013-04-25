@@ -79,7 +79,7 @@ void Mesh::TextureInit() {
   // Generate and load textures
   glGenTextures(2, texture);
   BitMapFile *image[2];
-  image[0] = getBMPData("test16.bmp");
+  image[0] = getBMPData(args->heightmap_filename);
   image[1] = getBMPData("stone.bmp");
 
   // Set Texture 0

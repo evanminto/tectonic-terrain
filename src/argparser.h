@@ -29,6 +29,10 @@ public:
 		 !strcmp(argv[i],"-f")) {
 	i++; assert (i < argc); 
 	fragment_shader_filename = std::string(argv[i]);
+      } else if (!strcmp(argv[i],"-heightmap") ||
+		 !strcmp(argv[i],"-h")) {
+	i++; assert (i < argc); 
+	heightmap_filename = std::string(argv[i]);
       } else if (!strcmp(argv[i],"-size") ||
                  !strcmp(argv[i],"-s")) {
 	i++; assert (i < argc); 
@@ -47,6 +51,7 @@ public:
     input_file = "";
     vertex_shader_filename = "";
     fragment_shader_filename = "";
+    heightmap_filename = "flat.bmp";
     width = 600;
     height = 600;
     glsl_enabled = false;
@@ -62,6 +67,7 @@ public:
   std::string input_file;
   std::string fragment_shader_filename;
   std::string vertex_shader_filename;
+  std::string heightmap_filename;
   int width;
   int height;
   bool glsl_enabled;

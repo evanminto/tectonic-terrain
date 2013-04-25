@@ -12,9 +12,9 @@ void main(void) {
 
   gl_TexCoord[0].xy = gl_MultiTexCoord0.xy;
   dv = texture2D(terrainMap, gl_MultiTexCoord0.xy);
-  df = 0.30*dv.z + 0.59*dv.y + 0.11*dv.x;
+  df = 256.0*256.0*dv.x + 256.0*dv.y + dv.z;
+  df = df / (256.0*256.0*2.0);
   newVertexPos = vec4(gl_Normal * df * 1.0, 0.0) + gl_Vertex;
-  newVertexPos.y = newVertexPos.y - 0.5;
 
   // the fragment shader requires both the world space position (for
   // consistent bump mapping) & eyespace position (for the phong

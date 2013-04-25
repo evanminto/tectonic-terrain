@@ -4,6 +4,7 @@ Options:
 -i filename.obj   - Specify .obj file
 -v filename.vs    - Specify vertex shader
 -f filename.fs    - Specify fragment shader
+-h filename.bmp   - Specify heigtmap image
 -s 600            - Specify window size (pixels)
 -t 200            - Specify timestep size (ms)
 
