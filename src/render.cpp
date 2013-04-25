@@ -205,8 +205,8 @@ void Mesh::drawVBOs() {
   
   // -------------------------
   // Render Light (for debugging)
-  glColor3f(1,1,0);
-  DrawLight();
+  //glColor3f(1,1,0);
+  //DrawLight();
     
   HandleGLError(); 
 }

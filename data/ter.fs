@@ -9,26 +9,12 @@ float cnoise(vec3 P);
 
 void main (void) {
   vec4 stone;
+  vec3 color;
  
   stone = texture2D(texStone, gl_TexCoord[0].st);
 
-  // the base colors for the wood rings
-  vec3 color;
-  vec3 ring1 = vec3(0.49+0.06*cnoise(10.0*position_worldspace), 0.33+0.04*cnoise(10.0*position_worldspace), 0.11+0.02*cnoise(10.0*position_worldspace));
-  vec3 ring2 = vec3(0.62, 0.52, 0.35);
-  vec3 ring3 = vec3(0.33, 0.33, 0.33);
-
   // high frequency noise added to the normal for the bump map
-  vec3 normal2 = normalize(normal+0.15*cnoise(30.0*position_worldspace));
-
-  // select colors for bands
-  float freq = mod(sqrt(pow(position_worldspace.x,2.0)+pow(position_worldspace.z,2.0))+0.02*cnoise(5.0*position_worldspace),0.06);
-  if (freq >= 0.02-0.002*cnoise(5.0*position_worldspace) && freq < 0.03+0.002*cnoise(5.0*position_worldspace))
-    color = ring3;
-  else if (freq >= 0.00 && freq < 0.005+0.005*cnoise(5.0*position_worldspace))
-    color = ring3;
-  else
-    color = ring3;
+  vec3 normal2 = normalize(normal+0.15*cnoise(150.0*position_worldspace));
 
   // direction to the light
   vec3 light = normalize(gl_LightSource[1].position.xyz - position_eyespace);
@@ -38,13 +24,11 @@ void main (void) {
   vec3 reflected_vector = normalize(-reflect(light,normal2));
 
   // basic phong lighting
-  float ambient = 0.6;
-  float diffuse = 0.4*max(dot(normal,light),0.0);
-  float specular = 0.2 * pow(max(dot(reflected_vector,eye_vector),0.0),10.0);
+  float diffuse = 1.0 * max(dot(normal2,light),0.0);
+  float specular = 0.5 * pow(max(dot(reflected_vector,eye_vector),0.0),10.0);
   vec3 white = vec3(1.0,1.0,1.0);
-  color = ambient*color + diffuse*color + specular*white;
-  gl_FragColor = stone; 
-  //gl_FragColor = vec4 (color, 1.0);
+  color = diffuse*stone.rgb + specular*stone.rgb;
+  gl_FragColor = vec4 (color, 1.0);
 }
 
 /* GLSL textureless classic 3D noise "cnoise"
