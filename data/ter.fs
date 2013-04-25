@@ -1,12 +1,16 @@
 varying vec3 normal;
 varying vec3 position_eyespace;
 varying vec3 position_worldspace;
+uniform sampler2D texStone;
 
 float cnoise(vec3 P);
 
 /* terrain shader */
 
 void main (void) {
+  vec4 stone;
+ 
+  stone = texture2D(texStone, gl_TexCoord[0].st);
 
   // the base colors for the wood rings
   vec3 color;
@@ -39,7 +43,8 @@ void main (void) {
   float specular = 0.2 * pow(max(dot(reflected_vector,eye_vector),0.0),10.0);
   vec3 white = vec3(1.0,1.0,1.0);
   color = ambient*color + diffuse*color + specular*white;
-  gl_FragColor = vec4 (color, 1.0);
+  gl_FragColor = stone; 
+  //gl_FragColor = vec4 (color, 1.0);
 }
 
 /* GLSL textureless classic 3D noise "cnoise"

@@ -175,19 +175,34 @@ void Mesh::drawVBOs() {
   // --------------------------
   // Render Mesh 
   InsertColor(mesh_color);
+  glEnable(GL_TEXTURE_2D);
   if (args->glsl_enabled) {
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE0);
     glUseProgramObjectARB(GLCanvas::program);
+    glActiveTexture(GL_TEXTURE0);
+
+    // Height Map
+    glActiveTexture(GL_TEXTURE0);
     GLint mapLoc = glGetUniformLocationARB(GLCanvas::program, "terrainMap");
     glBindTexture(GL_TEXTURE_2D, texture[0]);
     glUniform1iARB(mapLoc, 0);
+
+    // Stone Texture
+    glActiveTexture(GL_TEXTURE1);
+    GLint stoneLoc = glGetUniformLocationARB(GLCanvas::program, "texStone");
+    glBindTexture(GL_TEXTURE_2D, texture[1]);
+    glUniform1iARB(stoneLoc, 1);
+
+    glActiveTexture(GL_TEXTURE0);
+  }
+  else {
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
   }
   DrawMesh();
   if (args->glsl_enabled) {
     glUseProgramObjectARB(0);
   }
-
+  glDisable(GL_TEXTURE_2D);
+  
   // -------------------------
   // Render Light (for debugging)
   glColor3f(1,1,0);

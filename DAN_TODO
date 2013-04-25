@@ -1,0 +1,12 @@
+By Progress Post:
+* Command line heightmap option
+* Add flat heightmap (solid color)
+* Simple lighting
+* Help with tectonic interface
+
+By Submission:
+* Multitexturing (blending based on elevation, ideally)
+* Improve lighting
+* Texture noise effects
+* View labels (height map, plates, simulation, etc.)
+* Help improve tectonics
