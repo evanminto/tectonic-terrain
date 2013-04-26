@@ -20,9 +20,13 @@ private:
 public:
   Plate();
   Plate(const Vec3f& p1, const Vec3f& p2);
+
+  Vec3f getVelocity() const { return velocity; }
+
   void setVelocity(const Vec3f& vel);
   Plate getOverlap(const Plate& other) const;
   float getArea() const;
+  float getNearbyArea() const;
   float getLeft() const;
   float getRight() const;
   float getTop() const;
@@ -32,4 +36,6 @@ public:
   void makeEmpty();
   void printPlate() const;
   bool pointInPlate(const Vec3f& pos) const;
+  bool pointNearPlate(const Vec3f& pos) const;
+  Vec3f getMidpoint() const;
 };

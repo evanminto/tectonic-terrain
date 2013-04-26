@@ -8,6 +8,15 @@
  */
 
 #include "Simulation.h"
+#define PI 3.14
+
+
+float randomFloat(float a, float b) {
+  float random = ((float) rand()) / (float) RAND_MAX;
+  float diff = b - a;
+  float r = random * diff;
+  return a + r;
+}
 
 Simulation::Simulation() {
   
@@ -57,10 +66,39 @@ void Simulation::update() {
 }
 
 float Simulation::getDisplacement(const Vec3f& pos) const {
-  if (!overlap.pointInPlate(pos))
+  if (!overlap.pointNearPlate(pos))
     return 0;
+
+  bool inOverlap = false;
+  if (overlap.pointInPlate(pos))
+    inOverlap = true;
+
+  float area = overlap.getArea();
+  float nearbyArea = overlap.getNearbyArea();
+  float distanceFromMid = pos.x() - overlap.getMidpoint().x();
+  //float displacement = 0.00001 * area / (distanceFromMid * distanceFromMid);
+
+  float a = area;
+  float amplitude = 0.01;
+  Vec3f center = overlap.getMidpoint();
+  float spread = 0.15;
+
+  float y = amplitude * exp(-1 * (pos.x() - center.x()) * (pos.x() - center.x())/ (2 * spread * spread));
+
+  float displacement = y;
+
+  // Area factor
+  displacement *= area;
+
+  // Velocity factor
+  displacement *= (1 + plates[0].getVelocity().Length() + plates[1].getVelocity().Length());
+
+  // Noise
+  displacement += (randomFloat(-0.008, 0.008));
+
+  //std::cout<<abs(pos.x() - overlap.getMidpoint().x())<<std::endl;
   
-  return overlap.getArea();
+  return displacement;
 }
 
 void Simulation::printSimulation() const {

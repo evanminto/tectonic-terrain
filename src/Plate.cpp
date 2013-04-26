@@ -54,6 +54,16 @@ float Plate::getArea() const {
   return area;
 }
 
+float Plate::getNearbyArea() const {
+  float area = (vertices[0].x() - 0.2 - vertices[1].x() - 0.2) * (vertices[0].z() + 0.2 - vertices[1].z() + 0.2);
+  if (area < 0)
+    area *= -1;
+  if (empty)
+    area *= -1;
+  
+  return area;
+}
+
 float Plate::getLeft() const {
   return vertices[0].x();
 }
@@ -104,3 +114,15 @@ bool Plate::pointInPlate(const Vec3f& pos) const {
     return true;
   return false;
 }
+
+bool Plate::pointNearPlate(const Vec3f& pos) const {
+  if (pos.x() > vertices[0].x() - 0.2 && pos.x() < vertices[1].x() + 0.2 && pos.z() > vertices[1].z() - 0.1 && pos.z() < vertices[0].z() + 0.1)
+    return true;
+  return false;
+}
+
+Vec3f Plate::getMidpoint() const
+{
+  return 0.5 * (vertices[0] + vertices[1]);
+}
+

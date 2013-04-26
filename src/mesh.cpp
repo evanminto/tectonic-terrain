@@ -14,9 +14,9 @@ Mesh::Mesh(ArgParser *_args) {
   args = _args;
 
   simulation = new Simulation();
-  simulation->addPlate(Vec3f(-3,0,-0.8), Vec3f(-2,0,-3));
-  simulation->addPlate(Vec3f(-1.8,0,-0.8), Vec3f(-0.8,0,-3));
-  simulation->setVelocity(Vec3f(0.1, 0, 0));
+  simulation->addPlate(Vec3f(-0.5,0,0.5), Vec3f(0.4,0,-1.5));
+  simulation->addPlate(Vec3f(0.6,0,0.5), Vec3f(1.5,0,-1.5));
+  simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.1, 0, 0));
 }
 
 Mesh::~Mesh() {
@@ -196,12 +196,12 @@ Vec3f ComputeNormal(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3) {
 void Mesh::displaceVertices() {
   simulation->update();
 
-  simulation->printSimulation();
+  //simulation->printSimulation();
 
   for (int i = 0; i < numVertices(); i++) {
     float displacement = simulation->getDisplacement(vertices[i]->getPos());
-    std::cout<<displacement<<" ";
+    //std::cout<<displacement<<" ";
     getVertex(i)->displace(displacement);
   }
-  std::cout<<std::endl;
+  //std::cout<<std::endl;
 }
