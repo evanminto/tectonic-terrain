@@ -37,6 +37,7 @@ void Mesh::initializeVBOs() {
   glGenBuffers(1,&mesh_tri_verts_VBO);
   glGenBuffers(1,&light_vert_VBO);
   bbox.initializeVBOs();
+  TextureInit();
 }
 
 void Mesh::cleanupVBOs() {
@@ -177,7 +178,6 @@ void Mesh::setupVBOs() {
   cleanupVBOs();
   // setup the new geometry
   Vec3f light_position = LightPosition();
-  TextureInit();
   SetupLight(light_position);
   SetupMesh();
   bbox.setupVBOs();
