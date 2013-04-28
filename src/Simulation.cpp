@@ -52,11 +52,11 @@ void Simulation::setVelocity(const Vec3f& v1) {
 }
 
 void Simulation::update() {
-  for (int i=0; i<numPlates; i++) {
+  for (unsigned int i=0; i<numPlates; i++) {
     
     plates[i].move();
     
-    for (int j=0; j<numPlates; j++) {
+    for (unsigned int j=0; j<numPlates; j++) {
       if (i==j) continue;
       plates[i].applyForce(plates[j]);
     }
@@ -69,16 +69,16 @@ float Simulation::getDisplacement(const Vec3f& pos) const {
   if (!overlap.pointNearPlate(pos))
     return 0;
 
-  bool inOverlap = false;
+  /*bool inOverlap = false;
   if (overlap.pointInPlate(pos))
-    inOverlap = true;
+    inOverlap = true;*/
 
   float area = overlap.getArea();
-  float nearbyArea = overlap.getNearbyArea();
-  float distanceFromMid = pos.x() - overlap.getMidpoint().x();
+  //float nearbyArea = overlap.getNearbyArea();
+  //float distanceFromMid = pos.x() - overlap.getMidpoint().x();
   //float displacement = 0.00001 * area / (distanceFromMid * distanceFromMid);
 
-  float a = area;
+  //float a = area;
   float amplitude = 0.01;
   Vec3f center = overlap.getMidpoint();
   float spread = 0.15;
@@ -102,7 +102,7 @@ float Simulation::getDisplacement(const Vec3f& pos) const {
 }
 
 void Simulation::printSimulation() const {
-  for (int i=0; i<numPlates; i++) {
+  for (unsigned int i=0; i<numPlates; i++) {
     plates[i].printPlate();
   }
   

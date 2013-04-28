@@ -2,6 +2,8 @@ varying vec3 normal;
 varying vec3 position_eyespace;
 varying vec3 position_worldspace;
 uniform sampler2D texStone;
+uniform sampler2D texGrass;
+uniform sampler2D texSnow;
 
 float cnoise(vec3 P);
 
@@ -9,12 +11,16 @@ float cnoise(vec3 P);
 
 void main (void) {
   vec4 stone;
+  vec4 grass;
+  vec4 snow;
   vec3 color;
  
   stone = texture2D(texStone, gl_TexCoord[0].st);
+  grass = texture2D(texGrass, gl_TexCoord[0].st);
+  snow  = texture2D(texSnow,  gl_TexCoord[0].st);
 
   // high frequency noise added to the normal for the bump map
-  vec3 normal2 = normalize(normal+0.15*cnoise(150.0*position_worldspace));
+  vec3 normal2 = normalize(normal+0.15*cnoise(358.0*position_worldspace));
 
   // direction to the light
   vec3 light = normalize(gl_LightSource[1].position.xyz - position_eyespace);
@@ -25,9 +31,20 @@ void main (void) {
 
   // basic phong lighting
   float diffuse = 1.0 * max(dot(normal2,light),0.0);
-  float specular = 0.5 * pow(max(dot(reflected_vector,eye_vector),0.0),10.0);
+  float specular = 0.1 * pow(max(dot(reflected_vector,eye_vector),0.0),10.0);
   vec3 white = vec3(1.0,1.0,1.0);
-  color = diffuse*stone.rgb + specular*stone.rgb;
+ 
+  // select texture based on height
+  float height = position_worldspace.y + 0.065*cnoise(123.0*position_worldspace);
+  if (height < 0.2 - 0.075*cnoise(77.0*position_worldspace))
+    color = grass.rgb;
+  else if (height > 0.4 + 0.045*cnoise(515.0*position_worldspace))
+    color = snow.rgb;
+  else
+    color = stone.rgb;
+
+
+  color = diffuse*color.rgb + specular*white.rgb;
   gl_FragColor = vec4 (color, 1.0);
 }
 

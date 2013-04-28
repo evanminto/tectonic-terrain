@@ -11,6 +11,9 @@ Vec3f mesh_color(1,1,1);
 Vec3f mirror_color(0.1,0.1,0.2);
 Vec3f mirror_tint(0.9,0.9,1.0);
 
+// Array of texture indices
+static unsigned int texture[4];
+
 // =======================================================================
 // =======================================================================
 
@@ -77,12 +80,14 @@ void Mesh::TextureInit() {
   glEnable(GL_TEXTURE_2D);
 
   // Generate and load textures
-  glGenTextures(2, texture);
-  BitMapFile *image[2];
+  glGenTextures(3, texture);
+  BitMapFile *image[3];
   image[0] = getBMPData(args->heightmap_filename);
   image[1] = getBMPData("stone.bmp");
+  image[2] = getBMPData("grass.bmp");
+  image[3] = getBMPData("snow.bmp");
 
-  // Set Texture 0
+  // Set Texture 0 - Heightmap
   glBindTexture(GL_TEXTURE_2D, texture[0]);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -93,14 +98,32 @@ void Mesh::TextureInit() {
                GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
 
   
-  // Set Texture 1
+  // Set Texture 1 - Stone
   glBindTexture(GL_TEXTURE_2D, texture[1]);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image[1]->sizeX, image[1]->sizeY, 0, 
                GL_RGB, GL_UNSIGNED_BYTE, image[1]->data);
+
+  // Set Texture 2 - Grass
+  glBindTexture(GL_TEXTURE_2D, texture[2]);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image[2]->sizeX, image[2]->sizeY, 0, 
+               GL_RGB, GL_UNSIGNED_BYTE, image[2]->data);
+
+  // Set Texture 3 - Snow
+  glBindTexture(GL_TEXTURE_2D, texture[3]);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, image[3]->sizeX, image[3]->sizeY, 0, 
+               GL_RGB, GL_UNSIGNED_BYTE, image[3]->data);
 
   glDisable(GL_TEXTURE_2D);
 }
@@ -191,6 +214,18 @@ void Mesh::drawVBOs() {
     GLint stoneLoc = glGetUniformLocationARB(GLCanvas::program, "texStone");
     glBindTexture(GL_TEXTURE_2D, texture[1]);
     glUniform1iARB(stoneLoc, 1);
+
+    // Grass Texture
+    glActiveTexture(GL_TEXTURE2);
+    GLint grassLoc = glGetUniformLocationARB(GLCanvas::program, "texGrass");
+    glBindTexture(GL_TEXTURE_2D, texture[2]);
+    glUniform1iARB(grassLoc, 2);
+
+    // Snow Texture
+    glActiveTexture(GL_TEXTURE3);
+    GLint snowLoc = glGetUniformLocationARB(GLCanvas::program, "texSnow");
+    glBindTexture(GL_TEXTURE_2D, texture[3]);
+    glUniform1iARB(snowLoc, 3);
 
     glActiveTexture(GL_TEXTURE0);
   }
