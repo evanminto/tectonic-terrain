@@ -1,6 +1,7 @@
 varying vec3 normal;
 varying vec3 position_eyespace;
 varying vec3 position_worldspace;
+varying vec3 vertex_light_position;
 uniform sampler2D terrainMap;
 
 // Terrain height map shader
@@ -23,7 +24,7 @@ void main(void) {
   position_worldspace = newVertexPos.xyz;
 
   // pass along the normal
-  normal = normalize(gl_NormalMatrix * gl_Normal);
+  normal = gl_NormalMatrix * gl_Normal;
 
   gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
  }

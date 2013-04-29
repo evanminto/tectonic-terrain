@@ -6,10 +6,7 @@
 #include "argparser.h"
 #include "bmp.h"
 
-Vec3f floor_color(0.9,0.8,0.7);
-Vec3f mesh_color(1,1,1);
-Vec3f mirror_color(0.1,0.1,0.2);
-Vec3f mirror_tint(0.9,0.9,1.0);
+Vec3f mesh_color(1.0,1.0,1.0);
 
 // Array of texture indices
 static unsigned int texture[4];
@@ -56,15 +53,16 @@ void Mesh::SetupLight(Vec3f light_position) {
 }
 
 void Mesh::SetupMesh() {
+  ComputeGouraudNormals();
   for (triangleshashtype::iterator iter = triangles.begin();
        iter != triangles.end(); iter++) {
     Triangle *t = iter->second;
     Vec3f a = (*t)[0]->getPos();
     Vec3f b = (*t)[1]->getPos();
     Vec3f c = (*t)[2]->getPos();    
-    Vec3f na = ComputeNormal(a,b,c);
-    Vec3f nb = na;
-    Vec3f nc = na;
+    Vec3f na = (*t)[0]->getGouraudNormal();
+    Vec3f nb = (*t)[1]->getGouraudNormal();
+    Vec3f nc = (*t)[2]->getGouraudNormal();
     Vec3f color = mesh_color;
     mesh_tri_verts.push_back(VBOPosNormalColorTexture(a,na,color,a.x()*1,a.z()*-1));
     mesh_tri_verts.push_back(VBOPosNormalColorTexture(b,nb,color,b.x()*1,b.z()*-1));
@@ -101,6 +99,7 @@ void Mesh::TextureInit() {
   
   // Set Texture 1 - Stone
   glBindTexture(GL_TEXTURE_2D, texture[1]);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -110,6 +109,7 @@ void Mesh::TextureInit() {
 
   // Set Texture 2 - Grass
   glBindTexture(GL_TEXTURE_2D, texture[2]);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -119,6 +119,7 @@ void Mesh::TextureInit() {
 
   // Set Texture 3 - Snow
   glBindTexture(GL_TEXTURE_2D, texture[3]);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

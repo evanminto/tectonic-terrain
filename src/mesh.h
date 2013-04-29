@@ -27,6 +27,7 @@ public:
   Mesh(ArgParser *_args);
   ~Mesh();
   void Load(); 
+  void ComputeGouraudNormals();
 
   void initializeVBOs(); 
   void setupVBOs(); 
