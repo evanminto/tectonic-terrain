@@ -69,16 +69,7 @@ float Simulation::getDisplacement(const Vec3f& pos) const {
   if (!overlap.pointNearPlate(pos))
     return 0;
 
-  /*bool inOverlap = false;
-  if (overlap.pointInPlate(pos))
-    inOverlap = true;*/
-
   float area = overlap.getArea();
-  //float nearbyArea = overlap.getNearbyArea();
-  //float distanceFromMid = pos.x() - overlap.getMidpoint().x();
-  //float displacement = 0.00001 * area / (distanceFromMid * distanceFromMid);
-
-  //float a = area;
   float amplitude = 0.01;
   Vec3f center = overlap.getMidpoint();
   float spread = 0.15;
@@ -95,8 +86,6 @@ float Simulation::getDisplacement(const Vec3f& pos) const {
 
   // Noise
   displacement += (randomFloat(-0.008, 0.008));
-
-  //std::cout<<abs(pos.x() - overlap.getMidpoint().x())<<std::endl;
   
   return displacement;
 }

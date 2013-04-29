@@ -222,8 +222,6 @@ void Mesh::displaceVertices() {
 
   for (int i = 0; i < numVertices(); i++) {
     float displacement = simulation->getDisplacement(vertices[i]->getPos());
-    //std::cout<<displacement<<" ";
-    getVertex(i)->displace(displacement);
+    getVertex(i)->displace(args->timestep * displacement);
   }
-  //std::cout<<std::endl;
 }
