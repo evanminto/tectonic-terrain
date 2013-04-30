@@ -1,23 +1,27 @@
 varying vec3 normal;
 varying vec3 position_eyespace;
 varying vec3 position_worldspace;
+
+varying vec2 tex_coord;
+
 uniform sampler2D texStone;
 uniform sampler2D texGrass;
 uniform sampler2D texSnow;
 
 float cnoise(vec3 P);
 
-/* terrain shader */
+// Terrain pixel shader
 
 void main (void) {
   vec4 stone;
   vec4 grass;
   vec4 snow;
   vec4 color;
- 
-  stone = texture2D(texStone, gl_TexCoord[0].st);
-  grass = texture2D(texGrass, gl_TexCoord[0].st);
-  snow  = texture2D(texSnow,  gl_TexCoord[0].st);
+
+  // load textures
+  stone = texture2D(texStone,   tex_coord);
+  grass = texture2D(texGrass,   tex_coord);
+  snow  = texture2D(texSnow,    tex_coord);
 
   // high frequency noise added to the normal for the bump map
   vec3 normal2 = normalize(normal); //+0.0*cnoise(358.0*position_worldspace));
@@ -30,30 +34,34 @@ void main (void) {
   vec3 reflected_vector = normalize(-reflect(light,normal2) + position_eyespace);
 
   // basic phong lighting
-  vec4 ambient = 0.1;
-  vec4 diffuse = clamp(max(dot(normal2, light), 0.0),0.0,1.0);
-  vec4 specular = clamp(pow(max(dot(reflected_vector,eye_vector),0.0),10.0),0.0,1.0);
+  float ambient = 0.1;
+  float diffuse = clamp(max(dot(normal2, light), 0.0),0.0,1.0);
+  float specular = clamp(pow(max(dot(reflected_vector,eye_vector),0.0),10.0),0.0,1.0);
  
   // select texture based on height
   float height = position_worldspace.y + 0.065*cnoise(123.0*position_worldspace);
+
+  // use grass
   if (height < 0.2 - 0.075*cnoise(77.0*position_worldspace)) {
     color = grass;
     diffuse = 0.8*diffuse;
     specular = 0.05*specular;
   }
+  // use snow
   else if (height > 0.4 + 0.045*cnoise(515.0*position_worldspace)) {
     color = snow;
     diffuse = 1.0*diffuse;
     specular = 0.3*specular;
   }
+  // use stone
   else {
     color = stone;
     diffuse = 0.9*diffuse;
     specular = 0.1*specular;
   }
 
+  // set pixel color
   gl_FragColor = ambient + color * diffuse + specular;
-  //gl_FragColor = vec4(normal2,1.0);
 }
 
 /* GLSL textureless classic 3D noise "cnoise"
