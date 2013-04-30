@@ -48,9 +48,9 @@ public:
   }
 
   void DefaultValues() {
-    input_file = "";
-    vertex_shader_filename = "";
-    fragment_shader_filename = "";
+    input_file = "flat16.obj";
+    vertex_shader_filename = "ter.vs";
+    fragment_shader_filename = "ter.fs";
     heightmap_filename = "flat.bmp";
     width = 600;
     height = 600;

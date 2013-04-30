@@ -1,5 +1,6 @@
-// Daniel Benedetti
-//  December 2011
+// Inspired by Sumanta Guha
+// Computer Graphics Through OpenGL: From Theory to Experiments
+// 2011
 
 #include <fstream>
 #include "bmp.h"
