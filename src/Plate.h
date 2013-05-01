@@ -22,17 +22,27 @@ public:
   Plate(const Vec3f& p1, const Vec3f& p2);
 
   Vec3f getVelocity() const { return velocity; }
+  bool isEmpty() const { return empty; }
+  std::vector<Vec3f> getVertices(bool includeImaginary) const;
 
   void setVelocity(const Vec3f& vel);
   Plate getOverlap(const Plate& other) const;
   float getArea() const;
   float getNearbyArea() const;
+  float getWidth() const;
+  float getHeight() const;
+  float getNearbyWidth() const;
+  float getNearbyHeight() const;
   float getLeft() const;
   float getRight() const;
   float getTop() const;
   float getBottom() const;
-  void move();
-  void applyForce(const Plate& other);
+  float getNearbyLeft() const;
+  float getNearbyRight() const;
+  float getNearbyTop() const;
+  float getNearbyBottom() const;
+  void update(double timestep);
+  void applyForce(const Plate& other, double timestep);
   void makeEmpty();
   void printPlate() const;
   bool pointInPlate(const Vec3f& pos) const;

@@ -14,9 +14,18 @@ Mesh::Mesh(ArgParser *_args) {
   args = _args;
 
   simulation = new Simulation();
-  simulation->addPlate(Vec3f(-0.5,0,0.5), Vec3f(0.4,0,-1.5));
-  simulation->addPlate(Vec3f(0.6,0,0.5), Vec3f(1.5,0,-1.5));
-  simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.1, 0, 0));
+  bool gap = false;
+
+  if (gap) {
+    simulation->addPlate(Vec3f(-0.5,0,0.5), Vec3f(0.5,0,-1.5));
+    simulation->addPlate(Vec3f(0.5,0,0.5), Vec3f(1.5,0,-1.5));
+    simulation->setVelocity(Vec3f(-0.1, 0, 0), Vec3f(0.1, 0, 0));
+  }
+  else {
+    simulation->addPlate(Vec3f(-0.5,0,0.5), Vec3f(0.4,0,-1.5));
+    simulation->addPlate(Vec3f(0.6,0,0.5), Vec3f(1.5,0,-1.5));
+    simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.1, 0, 0));
+  }
 }
 
 Mesh::~Mesh() {
@@ -216,12 +225,12 @@ void Mesh::ComputeGouraudNormals() {
 // =================================================================
 
 void Mesh::displaceVertices() {
-  simulation->update();
+  simulation->update(args->timestep);
 
   //simulation->printSimulation();
 
   for (int i = 0; i < numVertices(); i++) {
     float displacement = simulation->getDisplacement(vertices[i]->getPos());
-    getVertex(i)->displace(args->timestep * displacement);
+    getVertex(i)->displace((args->timestep / 1000.0) * displacement);
   }
 }

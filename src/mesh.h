@@ -68,9 +68,11 @@ private:
   // HELPER FUNCTIONS FOR PAINT
   void SetupLight(Vec3f light_position);
   void SetupMesh();
+  void SetupPlateVisualization();
 
   void DrawLight();
   void DrawMesh();
+  void DrawPlateVisualization();
 
   void TextureInit();
 
@@ -85,9 +87,11 @@ private:
 
   // VBOs
   GLuint mesh_tri_verts_VBO;
+  GLuint mesh_plate_verts_VBO;
   GLuint light_vert_VBO;
 
   std::vector<VBOPosNormalColorTexture> mesh_tri_verts; 
+  std::vector<VBOPos> mesh_plate_verts; 
   std::vector<VBOPos> light_vert;
 };
 

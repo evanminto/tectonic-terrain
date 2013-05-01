@@ -22,10 +22,13 @@ private:
   
 public:
   Simulation();
+
+  std::vector<Vec3f> getAllVertices() const;
+
   void addPlate(const Vec3f& p1, const Vec3f& p2);
   void setVelocity(const Vec3f& v1, const Vec3f& v2);
   void setVelocity(const Vec3f& v1);
-  void update();
+  void update(double timestep);
   float getDisplacement(const Vec3f& pos) const;
   void printSimulation() const;
 };

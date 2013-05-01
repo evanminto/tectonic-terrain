@@ -32,6 +32,7 @@ Vec3f Mesh::LightPosition() {
 
 void Mesh::initializeVBOs() {
   glGenBuffers(1,&mesh_tri_verts_VBO);
+  glGenBuffers(1,&mesh_plate_verts_VBO);
   glGenBuffers(1,&light_vert_VBO);
   bbox.initializeVBOs();
   TextureInit();
@@ -39,6 +40,7 @@ void Mesh::initializeVBOs() {
 
 void Mesh::cleanupVBOs() {
   glDeleteBuffers(1,&mesh_tri_verts_VBO);
+  glDeleteBuffers(1,&mesh_plate_verts_VBO);
   glDeleteBuffers(1,&light_vert_VBO);
   bbox.cleanupVBOs();
 }
@@ -70,9 +72,24 @@ void Mesh::SetupMesh() {
   }
   glBindBuffer(GL_ARRAY_BUFFER,mesh_tri_verts_VBO); 
   glBufferData(GL_ARRAY_BUFFER,
-	       sizeof(VBOPosNormalColorTexture) * numTriangles() * 3,
-	       &mesh_tri_verts[0],
-	       GL_STATIC_DRAW); 
+         sizeof(VBOPosNormalColorTexture) * numTriangles() * 3,
+         &mesh_tri_verts[0],
+         GL_STATIC_DRAW); 
+}
+
+void Mesh::SetupPlateVisualization() {
+  std::vector<Vec3f> vertices = simulation->getAllVertices();
+  mesh_plate_verts.clear();
+  for (int i=0; i<vertices.size(); i++) {
+    mesh_plate_verts.push_back(VBOPos(Vec3f(vertices[i].x(), vertices[i].y()-0.2, vertices[i].z())));
+    //mesh_plate_verts.push_back(VBOPos(Vec3f(vertices[i].x(), vertices[i].y()-0.7, vertices[i].z())));
+  }
+
+  glBindBuffer(GL_ARRAY_BUFFER,mesh_plate_verts_VBO); 
+  glBufferData(GL_ARRAY_BUFFER,
+         sizeof(VBOPos) * vertices.size(),
+         &mesh_plate_verts[0],
+         GL_STATIC_DRAW); 
 }
 
 void Mesh::TextureInit() {
@@ -179,6 +196,19 @@ void Mesh::DrawMesh() {
   glDisableClientState(GL_VERTEX_ARRAY);
 }
 
+void Mesh::DrawPlateVisualization() {
+  std::vector<Vec3f> vertices = simulation->getAllVertices();
+  assert ((int)mesh_plate_verts.size() == vertices.size());
+  glBindBuffer(GL_ARRAY_BUFFER, mesh_plate_verts_VBO);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_FLOAT, sizeof(VBOPos), BUFFER_OFFSET(0));
+  
+  glColor3f(0.0, 0.0, 0.0);
+
+  glDrawArrays(GL_QUADS,0,vertices.size());
+  glDisableClientState(GL_VERTEX_ARRAY);
+}
+
 // ======================================================================================
 // ======================================================================================
 
@@ -191,6 +221,7 @@ void Mesh::setupVBOs() {
   Vec3f light_position = LightPosition();
   SetupLight(light_position);
   SetupMesh();
+  SetupPlateVisualization();
   bbox.setupVBOs();
 }
 
@@ -254,6 +285,8 @@ void Mesh::drawVBOs() {
     glUseProgramObjectARB(0);
   }
   glDisable(GL_TEXTURE_2D);
+
+  DrawPlateVisualization();
   
   // -------------------------
   // Render Light (for debugging)

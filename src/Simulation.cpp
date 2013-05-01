@@ -8,7 +8,7 @@
  */
 
 #include "Simulation.h"
-#define PI 3.14
+#include "perlin.cpp"
 
 
 float randomFloat(float a, float b) {
@@ -20,6 +20,15 @@ float randomFloat(float a, float b) {
 
 Simulation::Simulation() {
   
+}
+
+std::vector<Vec3f> Simulation::getAllVertices() const {
+  std::vector<Vec3f> result;
+  for (int i=0; i<plates.size(); i++) {
+    std::vector<Vec3f> plateVerts = plates[i].getVertices(true);
+    result.insert(result.end(), plateVerts.begin(), plateVerts.end());
+  }
+  return result;
 }
 
 void Simulation::updateOverlap() {
@@ -51,14 +60,14 @@ void Simulation::setVelocity(const Vec3f& v1) {
   setVelocity(v1, Vec3f(0,0,0));
 }
 
-void Simulation::update() {
+void Simulation::update(double timestep) {
   for (unsigned int i=0; i<numPlates; i++) {
     
-    plates[i].move();
+    plates[i].update(timestep);
     
     for (unsigned int j=0; j<numPlates; j++) {
       if (i==j) continue;
-      plates[i].applyForce(plates[j]);
+      plates[i].applyForce(plates[j], timestep);
     }
   }
   
@@ -66,26 +75,28 @@ void Simulation::update() {
 }
 
 float Simulation::getDisplacement(const Vec3f& pos) const {
-  if (!overlap.pointNearPlate(pos))
-    return 0;
 
-  float area = overlap.getArea();
-  float amplitude = 0.01;
+  //float area = overlap.getArea();
+  float amplitude = 0.3 * (sqrt(plates[0].getVelocity().Length()) + sqrt(plates[1].getVelocity().Length()));//0.001;
+  if (overlap.isEmpty())
+    amplitude *= -1;
   Vec3f center = overlap.getMidpoint();
-  float spread = 0.15;
+  float spread = 0.5 * overlap.getNearbyWidth();
 
-  float y = amplitude * exp(-1 * (pos.x() - center.x()) * (pos.x() - center.x())/ (2 * spread * spread));
+  float y = amplitude * exp(-1 * (pos.x() - center.x()) * (pos.x() - center.x()) / (2 * spread * spread));
 
   float displacement = y;
 
   // Area factor
-  displacement *= area;
+  //displacement *= sqrt(area);
 
   // Velocity factor
-  displacement *= (1 + plates[0].getVelocity().Length() + plates[1].getVelocity().Length());
+  //displacement *= (1 + sqrt(plates[0].getVelocity().Length()) + sqrt(plates[1].getVelocity().Length()));
 
-  // Noise
-  displacement += (randomFloat(-0.008, 0.008));
+  // Random factor
+  displacement += -0.3 * y * perlinNoise(randomFloat(0, 1), randomFloat(0, 1));
+
+  std::cout<<displacement<<std::endl;
   
   return displacement;
 }

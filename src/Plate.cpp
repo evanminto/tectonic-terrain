@@ -23,6 +23,7 @@ Plate::Plate(const Vec3f& p1, const Vec3f& p2) {
   empty = false;
 }
 
+  }
 void Plate::setVelocity(const Vec3f& vel) {
   velocity = vel;
 }
