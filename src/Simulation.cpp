@@ -77,7 +77,7 @@ void Simulation::update(double timestep) {
 float Simulation::getDisplacement(const Vec3f& pos) const {
 
   //float area = overlap.getArea();
-  float amplitude = 0.3 * (sqrt(plates[0].getVelocity().Length()) + sqrt(plates[1].getVelocity().Length()));//0.001;
+  float amplitude = 0.1 * (plates[0].getVelocity().Length() + plates[1].getVelocity().Length());//0.001;
   if (overlap.isEmpty())
     amplitude *= -1;
   Vec3f center = overlap.getMidpoint();
@@ -96,7 +96,7 @@ float Simulation::getDisplacement(const Vec3f& pos) const {
   // Random factor
   displacement += -0.3 * y * perlinNoise(randomFloat(0, 1), randomFloat(0, 1));
 
-  std::cout<<displacement<<std::endl;
+  //std::cout<<displacement<<std::endl;
   
   return displacement;
 }

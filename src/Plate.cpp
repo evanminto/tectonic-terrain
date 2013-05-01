@@ -130,8 +130,8 @@ float Plate::getNearbyBottom() const {
 void Plate::update(double timestep) {
   velocity += (timestep / 1000.0) * acceleration;
   
-  vertices[0] += velocity;
-  vertices[1] += velocity;
+  vertices[0] += (timestep / 1000.0) * velocity;
+  vertices[1] += (timestep / 1000.0) * velocity;
 }
 
 void Plate::applyForce(const Plate& other, double timestep) {
@@ -141,7 +141,7 @@ void Plate::applyForce(const Plate& other, double timestep) {
   reverseAcceleration.Negate();
   acceleration = Vec3f(0,0,0);
   if (true || !overlap.empty) { // Not physically accurate but whatever
-    acceleration = reverseAcceleration * 10 * (timestep / 1000.0) * (overlap.getArea() / getArea());
+    acceleration = reverseAcceleration * (sqrt(fabs(overlap.getArea())) / sqrt(getArea()));
   }
 }
 
