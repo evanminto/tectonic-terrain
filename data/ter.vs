@@ -2,6 +2,7 @@ varying vec3 normal;
 varying vec3 position_eyespace;
 varying vec3 position_worldspace;
 varying vec3 vertex_light_position;
+
 uniform sampler2D terrainMap;
 uniform sampler2D normalMap;
 
@@ -34,8 +35,7 @@ void main(void) {
   position_worldspace = newVertexPos.xyz;
 
   // pass along the normal
-  //normal = gl_NormalMatrix * gl_Normal;
-  normal = (gl_NormalMatrix * norm.xyz + gl_NormalMatrix * gl_Normal)/2.0;
+  normal = gl_NormalMatrix * (norm.xyz + gl_Normal)/2.0;
 
   // set the position
   gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;

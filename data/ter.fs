@@ -42,7 +42,7 @@ void main (void) {
   float height = position_worldspace.y + 0.065*cnoise(123.0*position_worldspace);
 
   // use grass
-  if (height < 0.2 - 0.075*cnoise(77.0*position_worldspace)) {
+  if (height < 0.15 - 0.075*cnoise(77.0*position_worldspace)) {
     color = grass;
     diffuse = 0.8*diffuse;
     specular = 0.05*specular;
