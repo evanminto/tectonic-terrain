@@ -23,7 +23,21 @@ Plate::Plate(const Vec3f& p1, const Vec3f& p2) {
   empty = false;
 }
 
+std::vector<Vec3f> Plate::getVertices(bool includeImaginary) const {
+  std::vector<Vec3f> result;
+  if (includeImaginary) {
+    result.push_back(vertices[0]);
+    result.push_back(Vec3f(vertices[1].x(), 0, vertices[0].z()));
+    result.push_back(vertices[1]);
+    result.push_back(Vec3f(vertices[0].x(), 0, vertices[1].z()));
   }
+  else {
+    result.push_back(vertices[0]);
+    result.push_back(vertices[1]);
+  }
+  return result;
+}
+
 void Plate::setVelocity(const Vec3f& vel) {
   velocity = vel;
 }
@@ -33,8 +47,8 @@ Plate Plate::getOverlap(const Plate& other) const {
   
   if (vertices[1].x() < other.vertices[0].x() || vertices[0].x() > other.vertices[1].x()) {
     newPlate.makeEmpty();
-    newPlate.vertices[0].set(vertices[0].x(), 0, vertices[0].z());
-    newPlate.vertices[1].set(other.vertices[1].x(), 0, other.vertices[1].z());
+    newPlate.vertices[0].set(vertices[1].x(), 0, vertices[0].z());
+    newPlate.vertices[1].set(other.vertices[0].x(), 0, other.vertices[1].z());
   }
   
   else {
@@ -56,13 +70,29 @@ float Plate::getArea() const {
 }
 
 float Plate::getNearbyArea() const {
-  float area = (vertices[0].x() - 0.2 - vertices[1].x() - 0.2) * (vertices[0].z() + 0.2 - vertices[1].z() + 0.2);
-  if (area < 0)
-    area *= -1;
+  float area = (getNearbyLeft() - getNearbyRight()) * (getNearbyTop() - getNearbyBottom());
+  area = fabs(area);
+
   if (empty)
     area *= -1;
   
   return area;
+}
+
+float Plate::getWidth() const {
+  return fabs(getLeft() - getRight());
+}
+
+float Plate::getHeight() const {
+  return fabs(getTop() - getBottom());
+}
+
+float Plate::getNearbyWidth() const {
+  return fabs(getNearbyLeft() - getNearbyRight());
+}
+
+float Plate::getNearbyHeight() const {
+  return fabs(getNearbyTop() - getNearbyBottom());
 }
 
 float Plate::getLeft() const {
@@ -81,21 +111,37 @@ float Plate::getBottom() const {
   return vertices[1].z();
 }
 
-void Plate::move() {
-  velocity += acceleration;
+float Plate::getNearbyLeft() const {
+  return getLeft() - getWidth() * 0.2;
+}
+
+float Plate::getNearbyRight() const {
+  return getRight() + getWidth() * 0.2;
+}
+
+float Plate::getNearbyTop() const {
+  return getTop() + getHeight() * 0.2;
+}
+
+float Plate::getNearbyBottom() const {
+  return getBottom() - getHeight() *0.2;
+}
+
+void Plate::update(double timestep) {
+  velocity += (timestep / 1000.0) * acceleration;
   
   vertices[0] += velocity;
   vertices[1] += velocity;
 }
 
-void Plate::applyForce(const Plate& other) {
+void Plate::applyForce(const Plate& other, double timestep) {
   Plate overlap = getOverlap(other);
   Vec3f reverseAcceleration = velocity;
   //reverseAcceleration.Normalize();
   reverseAcceleration.Negate();
   acceleration = Vec3f(0,0,0);
-  if (!overlap.empty) {
-    acceleration = reverseAcceleration * (overlap.getArea() / getArea());
+  if (true || !overlap.empty) { // Not physically accurate but whatever
+    acceleration = reverseAcceleration * 10 * (timestep / 1000.0) * (overlap.getArea() / getArea());
   }
 }
 
