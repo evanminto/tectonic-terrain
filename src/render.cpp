@@ -99,7 +99,7 @@ void Mesh::TextureInit() {
   glGenTextures(5, texture);
   BitMapFile *image[5];
   image[0] = getBMPData(args->heightmap_filename);
-  image[1] = getBMPData("normal.bmp");
+  image[1] = getBMPData(args->normalmap_filename);
   image[2] = getBMPData("stone.bmp");
   image[3] = getBMPData("grass.bmp");
   image[4] = getBMPData("snow.bmp");

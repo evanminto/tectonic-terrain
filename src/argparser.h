@@ -33,6 +33,10 @@ public:
 		 !strcmp(argv[i],"-h")) {
 	i++; assert (i < argc); 
 	heightmap_filename = std::string(argv[i]);
+      } else if (!strcmp(argv[i],"-normal") ||
+		 !strcmp(argv[i],"-n")) {
+	i++; assert (i < argc); 
+	normalmap_filename = std::string(argv[i]);
       } else if (!strcmp(argv[i],"-size") ||
                  !strcmp(argv[i],"-s")) {
 	i++; assert (i < argc); 
@@ -52,6 +56,7 @@ public:
     vertex_shader_filename = "ter.vs";
     fragment_shader_filename = "ter.fs";
     heightmap_filename = "flat.bmp";
+    normalmap_filename = "flat.bmp";
     width = 600;
     height = 600;
     glsl_enabled = false;
@@ -68,6 +73,7 @@ public:
   std::string fragment_shader_filename;
   std::string vertex_shader_filename;
   std::string heightmap_filename;
+  std::string normalmap_filename;
   int width;
   int height;
   bool glsl_enabled;

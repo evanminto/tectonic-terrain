@@ -24,7 +24,7 @@ void main (void) {
   snow  = texture2D(texSnow,    tex_coord);
 
   // high frequency noise added to the normal for the bump map
-  vec3 normal2 = normalize(normal); //+0.0*cnoise(358.0*position_worldspace));
+  vec3 normal2 = normalize(normal+0.05*cnoise(20.0*position_worldspace));
 
   // calculate the light direction
   vec3 light = normalize(gl_LightSource[1].position.xyz - position_eyespace);
@@ -36,7 +36,7 @@ void main (void) {
   // basic phong lighting
   float ambient = 0.1;
   float diffuse = clamp(max(dot(normal2, light), 0.0),0.0,1.0);
-  float specular = clamp(pow(max(dot(reflected_vector,eye_vector),0.0),10.0),0.0,1.0);
+  float specular = 0.5*clamp(pow(max(dot(reflected_vector,eye_vector),0.0),10.0),0.0,1.0);
  
   // select texture based on height
   float height = position_worldspace.y + 0.065*cnoise(123.0*position_worldspace);

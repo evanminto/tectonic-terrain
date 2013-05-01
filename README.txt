@@ -4,7 +4,8 @@ Options:
 -i filename.obj   - Specify .obj file
 -v filename.vs    - Specify vertex shader
 -f filename.fs    - Specify fragment shader
--h filename.bmp   - Specify heightmap image
+-h filename.bmp   - Specify heightmap texture
+-n filename.bmp   - Specify normalmap texture
 -s 600            - Specify window size (pixels)
 -t 200            - Specify timestep size (ms)
 
