@@ -34,9 +34,13 @@ public:
 	i++; assert (i < argc); 
 	heightmap_filename = std::string(argv[i]);
       } else if (!strcmp(argv[i],"-normal") ||
-		 !strcmp(argv[i],"-n")) {
-	i++; assert (i < argc); 
-	normalmap_filename = std::string(argv[i]);
+     !strcmp(argv[i],"-n")) {
+  i++; assert (i < argc); 
+  normalmap_filename = std::string(argv[i]);
+      } else if (!strcmp(argv[i],"-faultpoints") ||
+     !strcmp(argv[i],"-p")) {
+  i++; assert (i < argc); 
+  faultpoints_config = atoi(argv[i]);
       } else if (!strcmp(argv[i],"-size") ||
                  !strcmp(argv[i],"-s")) {
 	i++; assert (i < argc); 
@@ -63,6 +67,7 @@ public:
     glsl_initialized = false;
     timer = 0.0;
     timestep = 200.0; // ms
+    faultpoints_config = 0;
   }
 
   // ==============
@@ -80,6 +85,7 @@ public:
   bool glsl_initialized;
   float timer;
   float timestep;
+  int faultpoints_config;
 };
 
 #endif

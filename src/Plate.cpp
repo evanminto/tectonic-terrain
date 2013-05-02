@@ -8,19 +8,29 @@
  */
 
 #include <iostream>
+#include <vector>
+#include <typeinfo>
 
 #include "Plate.h"
+#include "Overlap.cpp"
 
 Plate::Plate() {
   vertices.push_back(Vec3f(0,0,0));
   vertices.push_back(Vec3f(0,0,0));
-  empty = false;
 }
 
-Plate::Plate(const Vec3f& p1, const Vec3f& p2) {
+Plate::Plate(const Vec3f& p1, const Vec3f& p2, bool faultsLeft) {
   vertices.push_back(p1);
   vertices.push_back(p2);
-  empty = false;
+
+  if (faultsLeft) {
+    addFaultPoint(Vec3f(p1.x(), p1.y(), p1.z()));
+    addFaultPoint(Vec3f(p1.x(), p1.y(), p2.z()));
+  }
+  else {
+    addFaultPoint(Vec3f(p2.x(), p1.y(), p1.z()));
+    addFaultPoint(Vec3f(p2.x(), p1.y(), p2.z()));
+  }
 }
 
 std::vector<Vec3f> Plate::getVertices(bool includeImaginary) const {
@@ -38,32 +48,37 @@ std::vector<Vec3f> Plate::getVertices(bool includeImaginary) const {
   return result;
 }
 
+void Plate::addFaultPoint(const Vec3f& point) {
+  Vec3f pt = point;
+  pt.sety(0.0);
+
+  if (faultPoints.size() >= 2)
+    faultPoints.insert(faultPoints.end() - 1, pt);
+  else
+    faultPoints.push_back(pt);
+}
+
 void Plate::setVelocity(const Vec3f& vel) {
   velocity = vel;
 }
 
-Plate Plate::getOverlap(const Plate& other) const {
-  Plate newPlate;
+Overlap Plate::getOverlap(const Plate& other) const {
+  Overlap overlap;
+  overlap.setWidth(fabs(vertices[1].x() - other.vertices[0].x()));
   
-  if (vertices[1].x() < other.vertices[0].x() || vertices[0].x() > other.vertices[1].x()) {
-    newPlate.makeEmpty();
-    newPlate.vertices[0].set(vertices[1].x(), 0, vertices[0].z());
-    newPlate.vertices[1].set(other.vertices[0].x(), 0, other.vertices[1].z());
+  if (vertices[1].x() < other.vertices[0].x() || vertices[0].x() > other.vertices[1].x())
+    overlap.makeEmpty();
+
+  for (int i=0; i<faultPoints.size(); i++) {
+    overlap.addFaultPoint(0.5 * (faultPoints[i] + other.faultPoints[i]));
   }
-  
-  else {
-    newPlate.vertices[0].set(other.vertices[0].x(), 0, other.vertices[0].z());
-    newPlate.vertices[1].set(vertices[1].x(), 0, vertices[1].z());
-  }
-  
-  return newPlate;
+
+  return overlap;
 }
 
 float Plate::getArea() const {
   float area = (vertices[0].x() - vertices[1].x()) * (vertices[0].z() - vertices[1].z());
   if (area < 0)
-    area *= -1;
-  if (empty)
     area *= -1;
   
   return area;
@@ -72,9 +87,6 @@ float Plate::getArea() const {
 float Plate::getNearbyArea() const {
   float area = (getNearbyLeft() - getNearbyRight()) * (getNearbyTop() - getNearbyBottom());
   area = fabs(area);
-
-  if (empty)
-    area *= -1;
   
   return area;
 }
@@ -132,27 +144,24 @@ void Plate::update(double timestep) {
   
   vertices[0] += (timestep / 1000.0) * velocity;
   vertices[1] += (timestep / 1000.0) * velocity;
-}
 
-void Plate::applyForce(const Plate& other, double timestep) {
-  Plate overlap = getOverlap(other);
-  Vec3f reverseAcceleration = velocity;
-  //reverseAcceleration.Normalize();
-  reverseAcceleration.Negate();
-  acceleration = Vec3f(0,0,0);
-  if (true || !overlap.empty) { // Not physically accurate but whatever
-    acceleration = reverseAcceleration * (sqrt(fabs(overlap.getArea())) / sqrt(getArea()));
+  for (int i=0; i<faultPoints.size(); i++) {
+    faultPoints[i] += (timestep / 1000.0) * velocity;
   }
 }
 
-void Plate::makeEmpty() {
-  empty = true;
+void Plate::applyForce(const Plate& other, const Overlap& overlap, double timestep) {
+  Vec3f reverseAcceleration = velocity;
+  //reverseAcceleration.Normalize();
+  reverseAcceleration.Negate();
+  //std::cout<<overlap.getWidth()<<std::endl;
+  acceleration = reverseAcceleration * (sqrt(fabs(5 * overlap.getArea())) / sqrt(getArea()));
+  if (acceleration.Length() > velocity.Length())
+    acceleration = reverseAcceleration;
 }
 
 void Plate::printPlate() const {
   std::cout<<"\t"<<vertices[0]<<std::endl<<"\t"<<vertices[1];
-  if (empty)
-    std::cout<<std::endl<<"\tempty";
   std::cout<<std::endl;
 }
 
@@ -166,10 +175,5 @@ bool Plate::pointNearPlate(const Vec3f& pos) const {
   if (pos.x() > vertices[0].x() - 0.2 && pos.x() < vertices[1].x() + 0.2 && pos.z() > vertices[1].z() - 0.1 && pos.z() < vertices[0].z() + 0.1)
     return true;
   return false;
-}
-
-Vec3f Plate::getMidpoint() const
-{
-  return 0.5 * (vertices[0] + vertices[1]);
 }
 

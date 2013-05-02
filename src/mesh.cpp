@@ -14,17 +14,55 @@ Mesh::Mesh(ArgParser *_args) {
   args = _args;
 
   simulation = new Simulation();
-  bool gap = false;
 
-  if (gap) {
-    simulation->addPlate(Vec3f(-0.5,0,0.5), Vec3f(0.5,0,-1.5));
-    simulation->addPlate(Vec3f(0.5,0,0.5), Vec3f(1.5,0,-1.5));
-    simulation->setVelocity(Vec3f(-0.1, 0, 0), Vec3f(0.1, 0, 0));
+  switch(args->faultpoints_config) {
+    case 3:
+      simulation->addPlate(Vec3f(-1.0,0,0.1), Vec3f(0.2,0,-1.1), false);
+      simulation->addPlate(Vec3f(0.4,0,0.1), Vec3f(1.6,0,-1.1), true);
+      break;
+    default:
+      simulation->addPlate(Vec3f(-0.8,0,0.1), Vec3f(0.4,0,-1.1), false);
+      simulation->addPlate(Vec3f(0.6,0,0.1), Vec3f(1.8,0,-1.1), true);
+      break;
   }
-  else {
-    simulation->addPlate(Vec3f(-0.5,0,0.5), Vec3f(0.4,0,-1.5));
-    simulation->addPlate(Vec3f(0.6,0,0.5), Vec3f(1.5,0,-1.5));
-    simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.1, 0, 0));
+
+  switch(args->faultpoints_config) {
+    case 0: // Move together equally
+      simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.1, 0, 0));
+      break;
+    case 1: // Move together, right moves faster
+      simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.3, 0, 0));
+      break;
+    case 2: // Move together fast
+      simulation->setVelocity(Vec3f(0.5, 0, 0), Vec3f(-0.5, 0, 0));
+      break;
+    case 3: // Move left fast toward, right slow away
+      simulation->setVelocity(Vec3f(0.5, 0, 0), Vec3f(0.15, 0, 0));
+      break;
+    case 4: // Move apart slowly, equally
+      simulation->setVelocity(Vec3f(-0.1, 0, 0), Vec3f(0.1, 0, 0));
+      break;
+    case 5: // Move apart fast
+      simulation->setVelocity(Vec3f(-0.5, 0, 0), Vec3f(0.5, 0, 0));
+      break;
+    case 6: // Move apart at different speeds
+      simulation->setVelocity(Vec3f(-0.6, 0, 0), Vec3f(0.1, 0, 0));
+      break;
+    case 7: // One fault point
+      simulation->setVelocity(Vec3f(0.2, 0, 0), Vec3f(-0.2, 0, 0));
+      simulation->addFaultPoint(Vec3f(0.7, 0.0, -0.5));
+      break;
+    case 8: // Two fault points
+      simulation->setVelocity(Vec3f(0.5, 0, 0), Vec3f(-0.5, 0, 0));
+      simulation->addFaultPoint(Vec3f(0.6, 0.0, -0.3));
+      simulation->addFaultPoint(Vec3f(0.45, 0.0, -0.6));
+      break;
+    case 9: // Three fault points
+      simulation->setVelocity(Vec3f(0.4, 0, 0), Vec3f(-0.4, 0, 0));
+      simulation->addFaultPoint(Vec3f(0.7, 0.0, -0.25));
+      simulation->addFaultPoint(Vec3f(0.55, 0.0, -0.5));
+      simulation->addFaultPoint(Vec3f(0.63, 0.0, -0.75));
+      break;
   }
 }
 
@@ -230,7 +268,7 @@ void Mesh::displaceVertices() {
   //simulation->printSimulation();
 
   for (int i = 0; i < numVertices(); i++) {
-    float displacement = simulation->getDisplacement(vertices[i]->getPos());
+    float displacement = simulation->getDisplacement(vertices[i]->getPos(), args->timestep);
     getVertex(i)->displace((args->timestep / 1000.0) * displacement);
   }
 }

@@ -7,27 +7,34 @@
  *
  */
 
+#ifndef PLATE_H
+#define PLATE_H
+
 #include <vector>
 #include "vectors.h"
 
+class Overlap;
+
 class Plate {
 private:
-  std::vector <Vec3f> vertices;
+  std::vector<Vec3f> vertices;
   Vec3f velocity;
   Vec3f acceleration;
-  bool empty;
+
+protected:
+  std::vector<Vec3f> faultPoints;
   
 public:
   Plate();
-  Plate(const Vec3f& p1, const Vec3f& p2);
+  Plate(const Vec3f& p1, const Vec3f& p2, bool faultsLeft);
 
   Vec3f getVelocity() const { return velocity; }
-  bool isEmpty() const { return empty; }
   std::vector<Vec3f> getVertices(bool includeImaginary) const;
 
+  void addFaultPoint(const Vec3f& point);
   void setVelocity(const Vec3f& vel);
-  Plate getOverlap(const Plate& other) const;
-  float getArea() const;
+  Overlap getOverlap(const Plate& other) const;
+  virtual float getArea() const;
   float getNearbyArea() const;
   float getWidth() const;
   float getHeight() const;
@@ -42,10 +49,10 @@ public:
   float getNearbyTop() const;
   float getNearbyBottom() const;
   void update(double timestep);
-  void applyForce(const Plate& other, double timestep);
-  void makeEmpty();
+  void applyForce(const Plate& other, const Overlap& overlap, double timestep);
   void printPlate() const;
   bool pointInPlate(const Vec3f& pos) const;
   bool pointNearPlate(const Vec3f& pos) const;
-  Vec3f getMidpoint() const;
 };
+
+#endif

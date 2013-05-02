@@ -9,6 +9,7 @@
 
 #include "Simulation.h"
 #include "perlin.cpp"
+#include "argparser.h"
 
 
 float randomFloat(float a, float b) {
@@ -45,8 +46,8 @@ void Simulation::sortPlates() {
   }
 }
 
-void Simulation::addPlate(const Vec3f& p1, const Vec3f& p2) {
-  plates.push_back(Plate(p1, p2));
+void Simulation::addPlate(const Vec3f& p1, const Vec3f& p2, bool faultsLeft) {
+  plates.push_back(Plate(p1, p2, faultsLeft));
   sortPlates();
   numPlates++;
 }
@@ -61,27 +62,30 @@ void Simulation::setVelocity(const Vec3f& v1) {
 }
 
 void Simulation::update(double timestep) {
+  updateOverlap();
+
   for (unsigned int i=0; i<numPlates; i++) {
     
     plates[i].update(timestep);
     
     for (unsigned int j=0; j<numPlates; j++) {
       if (i==j) continue;
-      plates[i].applyForce(plates[j], timestep);
+      plates[i].applyForce(plates[j], overlap, timestep);
     }
   }
-  
-  updateOverlap();
 }
 
-float Simulation::getDisplacement(const Vec3f& pos) const {
+float Simulation::getDisplacement(const Vec3f& pos, double timestep) const {
 
-  //float area = overlap.getArea();
-  float amplitude = 0.1 * (plates[0].getVelocity().Length() + plates[1].getVelocity().Length());//0.001;
+  float area = overlap.getArea();
+  float amplitude = 0.7 * area * (plates[0].getVelocity().Length() + plates[1].getVelocity().Length());//0.001;
   if (overlap.isEmpty())
     amplitude *= -1;
-  Vec3f center = overlap.getMidpoint();
-  float spread = 0.5 * overlap.getNearbyWidth();
+  if (fabs(overlap.getArea()) < 0.1 * timestep / 1000)
+    return 0;
+
+  Vec3f center = overlap.getMidpoint(pos);
+  float spread = 0.5 * overlap.getWidth();
 
   float y = amplitude * exp(-1 * (pos.x() - center.x()) * (pos.x() - center.x()) / (2 * spread * spread));
 
@@ -96,7 +100,7 @@ float Simulation::getDisplacement(const Vec3f& pos) const {
   // Random factor
   displacement += -0.3 * y * perlinNoise(randomFloat(0, 1), randomFloat(0, 1));
 
-  //std::cout<<displacement<<std::endl;
+  //std::cout<<center<<std::endl;
   
   return displacement;
 }
@@ -109,4 +113,12 @@ void Simulation::printSimulation() const {
   std::cout<<"OVERLAP: "<<overlap.getArea()<<std::endl;
   overlap.printPlate();
   std::cout<<std::endl<<std::endl;
+}
+
+void Simulation::addFaultPoint(const Vec3f& point) {
+  if (numPlates >= 2) {
+    float width = fabs(plates[0].getRight() - plates[1].getLeft());
+    plates[0].addFaultPoint(point - Vec3f(width/2.0, 0, 0));
+    plates[1].addFaultPoint(point + Vec3f(width/2.0, 0, 0));
+  }
 }

@@ -81,13 +81,23 @@ void Mesh::SetupPlateVisualization() {
   std::vector<Vec3f> vertices = simulation->getAllVertices();
   mesh_plate_verts.clear();
   for (int i=0; i<vertices.size(); i++) {
-    mesh_plate_verts.push_back(VBOPos(Vec3f(vertices[i].x(), vertices[i].y()-0.2, vertices[i].z())));
+    Vec3f pos(vertices[i].x(), vertices[i].y()-0.2, vertices[i].z());
+    Vec3f color(0.0, 0.0, 0.0);
+
+    if (i >= 4) {
+      color.set(1.0, 0.0, 0.0);
+      pos.sety(pos.y() - 0.01);
+    }
+    else
+      color.set(0.0, 0.0, 1.0);
+
+    mesh_plate_verts.push_back(VBOPosColor(pos, color));
     //mesh_plate_verts.push_back(VBOPos(Vec3f(vertices[i].x(), vertices[i].y()-0.7, vertices[i].z())));
   }
 
   glBindBuffer(GL_ARRAY_BUFFER,mesh_plate_verts_VBO); 
   glBufferData(GL_ARRAY_BUFFER,
-         sizeof(VBOPos) * vertices.size(),
+         sizeof(VBOPosColor) * vertices.size(),
          &mesh_plate_verts[0],
          GL_STATIC_DRAW); 
 }
@@ -201,12 +211,13 @@ void Mesh::DrawPlateVisualization() {
   assert ((int)mesh_plate_verts.size() == vertices.size());
   glBindBuffer(GL_ARRAY_BUFFER, mesh_plate_verts_VBO);
   glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(VBOPos), BUFFER_OFFSET(0));
-  
-  glColor3f(0.0, 0.0, 0.0);
+  glVertexPointer(3, GL_FLOAT, sizeof(VBOPosColor), BUFFER_OFFSET(0));
+  glEnableClientState(GL_COLOR_ARRAY);
+  glColorPointer(3, GL_FLOAT, sizeof(VBOPosColor), BUFFER_OFFSET(12));
 
   glDrawArrays(GL_QUADS,0,vertices.size());
   glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
 }
 
 // ======================================================================================
