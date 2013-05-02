@@ -37,10 +37,10 @@ public:
      !strcmp(argv[i],"-n")) {
   i++; assert (i < argc); 
   normalmap_filename = std::string(argv[i]);
-      } else if (!strcmp(argv[i],"-faultpoints") ||
+      } else if (!strcmp(argv[i],"-preset") ||
      !strcmp(argv[i],"-p")) {
   i++; assert (i < argc); 
-  faultpoints_config = atoi(argv[i]);
+  preset_config = atoi(argv[i]);
       } else if (!strcmp(argv[i],"-size") ||
                  !strcmp(argv[i],"-s")) {
 	i++; assert (i < argc); 
@@ -67,7 +67,7 @@ public:
     glsl_initialized = false;
     timer = 0.0;
     timestep = 200.0; // ms
-    faultpoints_config = 0;
+    preset = 0;
   }
 
   // ==============
@@ -85,7 +85,7 @@ public:
   bool glsl_initialized;
   float timer;
   float timestep;
-  int faultpoints_config;
+  int preset;
 };
 
 #endif

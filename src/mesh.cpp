@@ -15,7 +15,7 @@ Mesh::Mesh(ArgParser *_args) {
 
   simulation = new Simulation();
 
-  switch(args->faultpoints_config) {
+  switch(args->preset) {
     case 3:
       simulation->addPlate(Vec3f(-1.0,0,0.1), Vec3f(0.2,0,-1.1), false);
       simulation->addPlate(Vec3f(0.4,0,0.1), Vec3f(1.6,0,-1.1), true);
@@ -26,7 +26,7 @@ Mesh::Mesh(ArgParser *_args) {
       break;
   }
 
-  switch(args->faultpoints_config) {
+  switch(args->preset) {
     case 0: // Move together equally
       simulation->setVelocity(Vec3f(0.1, 0, 0), Vec3f(-0.1, 0, 0));
       break;
