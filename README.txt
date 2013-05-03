@@ -1,5 +1,15 @@
 tectonic-terrain
 
+Build Instructions:
+1) mkdir build
+2) cp data/* build
+3) cd build
+4) cmake ../src
+5) make
+
+Example:
+./render -i flat16.obj -h hm16.bmp -n norm16.bmp
+
 Options:
 -i filename.obj   - Specify .obj file
 -v filename.vs    - Specify vertex shader
@@ -12,8 +22,6 @@ Options:
 Controls:
 'd',' ' - Single step terrain displacement
 'a'     - Animate terrain displacement
-'r'     - Reset terrain
 'x'     - Enable shaders
-'l'     - Reload shaders
 'q'     - Quit
 
