@@ -33,10 +33,12 @@ std::vector<Vec3f> Simulation::getAllVertices() const {
 }
 
 void Simulation::updateOverlap() {
+  // Update overlap to represent the current overlap region
   overlap = plates[0].getOverlap(plates[1]);
 }
 
 void Simulation::sortPlates() {
+  // Make sure the plates are in the correct order
   if (plates.size() >= 2) {
     if (plates[0].getLeft() > plates[1].getLeft() || plates[0].getTop() < plates[1].getTop()) {
       Plate temp = plates[0];
@@ -62,6 +64,8 @@ void Simulation::setVelocity(const Vec3f& v1) {
 }
 
 void Simulation::update(double timestep) {
+  // Update the plate positions
+
   updateOverlap();
 
   for (unsigned int i=0; i<numPlates; i++) {
@@ -76,32 +80,26 @@ void Simulation::update(double timestep) {
 }
 
 float Simulation::getDisplacement(const Vec3f& pos, double timestep) const {
-
   float amplitude = 0.4 * (plates[0].getVelocity().Length() + plates[1].getVelocity().Length());//0.001;
+  
+  // If the overlap is empty, displace the vertices down, not up
   if (overlap.isEmpty())
     amplitude *= -1;
+  
+  // If the overlap is too small, don't bother displacing yet
   if (fabs(overlap.getArea()) < 0.1 * timestep / 1000)
     return 0;
 
   Vec3f center = overlap.getMidpoint(pos);
   float spread = 0.5 * overlap.getWidth();
 
+  // Compute Gaussian function
   float y = amplitude * exp(-1 * (pos.x() - center.x()) * (pos.x() - center.x()) / (2 * spread * spread));
-
-  float displacement = y;
-
-  // Area factor
-  //displacement *= sqrt(area);
-
-  // Velocity factor
-  //displacement *= (1 + sqrt(plates[0].getVelocity().Length()) + sqrt(plates[1].getVelocity().Length()));
-
-  // Random factor
-  displacement += -0.3 * y * perlinNoise(randomFloat(0, 1), randomFloat(0, 1));
-
-  //std::cout<<center<<std::endl;
   
-  return displacement;
+  // Compute Perlin noise
+  float noiseFactor = -0.3 * y * perlinNoise(randomFloat(0, 1), randomFloat(0, 1));
+
+  return y + noiseFactor;
 }
 
 void Simulation::printSimulation() const {
@@ -115,6 +113,7 @@ void Simulation::printSimulation() const {
 }
 
 void Simulation::addFaultPoint(const Vec3f& point) {
+  // Add a fault point to both plates
   if (numPlates >= 2) {
     float width = fabs(plates[0].getRight() - plates[1].getLeft());
     plates[0].addFaultPoint(point - Vec3f(width/2.0, 0, 0));

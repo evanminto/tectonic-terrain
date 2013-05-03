@@ -66,9 +66,11 @@ Overlap Plate::getOverlap(const Plate& other) const {
   Overlap overlap;
   overlap.setWidth(fabs(vertices[1].x() - other.vertices[0].x()));
   
+  // If the plates aren't touching, make the overlap empty
   if (vertices[1].x() < other.vertices[0].x() || vertices[0].x() > other.vertices[1].x())
     overlap.makeEmpty();
 
+  // Create the overlap's fault points based on this plate's fault points
   for (int i=0; i<faultPoints.size(); i++) {
     overlap.addFaultPoint(0.5 * (faultPoints[i] + other.faultPoints[i]));
   }
@@ -151,13 +153,16 @@ void Plate::update(double timestep) {
 }
 
 void Plate::applyForce(const Plate& other, const Overlap& overlap, double timestep) {
-  Vec3f reverseAcceleration = velocity;
-  //reverseAcceleration.Normalize();
-  reverseAcceleration.Negate();
-  //std::cout<<overlap.getWidth()<<std::endl;
-  acceleration = reverseAcceleration * (sqrt(fabs(5 * overlap.getArea())) / sqrt(getArea()));
+  Vec3f reverseVelocity = velocity;
+  reverseVelocity.Negate();
+
+  // Create friction force based on reversed velocity and the ratio of overlap area to plate area.
+  // This ensures the force only stops the velocity and doesn't reverse it.
+  acceleration = reverseVelocity * (sqrt(fabs(5 * overlap.getArea())) / sqrt(getArea()));
+  
+  // Just in case, make sure the force doesn't reverse the velocity
   if (acceleration.Length() > velocity.Length())
-    acceleration = reverseAcceleration;
+    acceleration = reverseVelocity;
 }
 
 void Plate::printPlate() const {
