@@ -239,6 +239,7 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
   case 'a': case 'A':
     animate = !animate;
     break;
+    /*
   case 'r': case 'R':
     delete mesh;
     args->timer = 0.0;
@@ -247,6 +248,7 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
     mesh->initializeVBOs();
     mesh->setupVBOs();
     break;
+    */
   case 'x': case 'X':
     args->glsl_enabled = !args->glsl_enabled;
     if (args->glsl_enabled) {
@@ -259,6 +261,7 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
     }
     mesh->setupVBOs();
     break;
+    /*
   case 'l' : case 'L':
     if (args->glsl_enabled) {
       assert (args->glsl_initialized);
@@ -266,6 +269,7 @@ void GLCanvas::keyboard(unsigned char key, int /*x*/, int /*y*/) {
       mesh->setupVBOs();
     }
     break;
+    */
   case 'q':  case 'Q':
     exit(0);
     break;
