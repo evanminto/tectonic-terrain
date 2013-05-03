@@ -21,8 +21,8 @@ Mesh::Mesh(ArgParser *_args) {
       simulation->addPlate(Vec3f(0.4,0,0.1), Vec3f(1.6,0,-1.1), true);
       break;
     default:
-      simulation->addPlate(Vec3f(-0.8,0,0.1), Vec3f(0.4,0,-1.1), false);
-      simulation->addPlate(Vec3f(0.6,0,0.1), Vec3f(1.8,0,-1.1), true);
+      simulation->addPlate(Vec3f(-0.8,0,0.1), Vec3f(0.48,0,-1.1), false);
+      simulation->addPlate(Vec3f(0.52,0,0.1), Vec3f(1.8,0,-1.1), true);
       break;
   }
 

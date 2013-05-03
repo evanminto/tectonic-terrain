@@ -40,7 +40,7 @@ public:
       } else if (!strcmp(argv[i],"-preset") ||
      !strcmp(argv[i],"-p")) {
   i++; assert (i < argc); 
-  preset_config = atoi(argv[i]);
+  preset = atoi(argv[i]);
       } else if (!strcmp(argv[i],"-size") ||
                  !strcmp(argv[i],"-s")) {
 	i++; assert (i < argc); 

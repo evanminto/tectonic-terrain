@@ -35,7 +35,7 @@ void main(void) {
   position_worldspace = newVertexPos.xyz;
 
   // pass along the normal
-  normal = gl_NormalMatrix * (norm.xyz + gl_Normal)/2.0;
+  normal = gl_NormalMatrix * norm.xyz;
 
   // set the position
   gl_Position = gl_ModelViewProjectionMatrix * newVertexPos;
