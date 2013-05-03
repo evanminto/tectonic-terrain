@@ -78,7 +78,7 @@ void Simulation::update(double timestep) {
 float Simulation::getDisplacement(const Vec3f& pos, double timestep) const {
 
   float area = overlap.getArea();
-  float amplitude = 0.7 * area * (plates[0].getVelocity().Length() + plates[1].getVelocity().Length());//0.001;
+  float amplitude = 0.6 * (plates[0].getVelocity().Length() + plates[1].getVelocity().Length());//0.001;
   if (overlap.isEmpty())
     amplitude *= -1;
   if (fabs(overlap.getArea()) < 0.1 * timestep / 1000)
