@@ -18,6 +18,7 @@ Options:
 -n filename.bmp   - Specify normalmap texture
 -s 600            - Specify window size (pixels)
 -t 200            - Specify timestep size (ms)
+-p 2	 		  - Specify preset (0-9)
 
 Controls:
 'd',' ' - Single step terrain displacement
