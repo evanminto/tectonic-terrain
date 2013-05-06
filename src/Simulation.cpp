@@ -20,7 +20,7 @@ float randomFloat(float a, float b) {
 }
 
 Simulation::Simulation() {
-  
+  numPlates = 0;
 }
 
 std::vector<Vec3f> Simulation::getAllVertices() const {
@@ -30,6 +30,11 @@ std::vector<Vec3f> Simulation::getAllVertices() const {
     result.insert(result.end(), plateVerts.begin(), plateVerts.end());
   }
   return result;
+}
+
+Simulation::~Simulation() {
+  plates.clear();
+  numPlates = 0;
 }
 
 void Simulation::updateOverlap() {

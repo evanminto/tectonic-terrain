@@ -24,6 +24,8 @@ private:
   
 public:
   Overlap();
+  ~Overlap();
+
   bool isEmpty() const { return empty; }
   Vec3f getMidpoint(const Vec3f& pos) const;
   void makeEmpty();

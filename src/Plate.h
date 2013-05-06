@@ -27,6 +27,7 @@ protected:
 public:
   Plate();
   Plate(const Vec3f& p1, const Vec3f& p2, bool faultsLeft);
+  ~Plate();
 
   Vec3f getVelocity() const { return velocity; }
   std::vector<Vec3f> getVertices(bool includeImaginary) const;

@@ -15,11 +15,15 @@
 #include "Overlap.cpp"
 
 Plate::Plate() {
+  velocity = Vec3f(0,0,0);
+  acceleration = Vec3f(0,0,0);
   vertices.push_back(Vec3f(0,0,0));
   vertices.push_back(Vec3f(0,0,0));
 }
 
 Plate::Plate(const Vec3f& p1, const Vec3f& p2, bool faultsLeft) {
+  velocity = Vec3f(0,0,0);
+  acceleration = Vec3f(0,0,0);
   vertices.push_back(p1);
   vertices.push_back(p2);
 
@@ -46,6 +50,12 @@ std::vector<Vec3f> Plate::getVertices(bool includeImaginary) const {
     result.push_back(vertices[1]);
   }
   return result;
+}
+
+Plate::~Plate() {
+  vertices.clear();
+  velocity = Vec3f(0,0,0);
+  acceleration = Vec3f(0,0,0);
 }
 
 void Plate::addFaultPoint(const Vec3f& point) {

@@ -23,6 +23,7 @@ private:
   
 public:
   Simulation();
+  ~Simulation();
 
   std::vector<Vec3f> getAllVertices() const;
 

@@ -13,6 +13,14 @@
 
 Overlap::Overlap() {
   empty = false;
+  center = Vec3f(0,0,0);
+  width = 0.0;
+}
+
+Overlap::~Overlap() {
+  center = Vec3f(0,0,0);
+  width = 0.0;
+  empty = false;
 }
 
 Vec3f Overlap::getMidpoint(const Vec3f& pos) const
