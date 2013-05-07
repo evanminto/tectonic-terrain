@@ -1,0 +1,25 @@
+
+EQUAL VELOCITIES, SINGLE CENTRAL HILL
+./render -i flat16.obj -h hm16.bmp -n norm16.bmp -p 0
+
+SLIGHTLY MODIFIED, CHANGE IN SLOPE AND POSITION
+./render -i flat16.obj -h hm16.bmp -n norm16.bmp -p 1
+
+SEPARATING WITH DIFFERENT VELOCITIES
+./render -i flat16.obj -h hm16.bmp -n norm16.bmp -p 6
+
+FAULT POINTS
+./render -i flat16.obj -h hm16.bmp -n norm16.bmp -p 9
+
+COOL JAGGED MOUNTAINS
+./render -i flat256.obj -h hm256.bmp -n norm256.bmp -p 1
+./render -i flat256.obj -h hm256.bmp -n norm256.bmp -p 3
+
+BOWL THING
+./render -i flat256.obj -h hm256_3.bmp -n norm256_3.bmp -p 5
+
+SHOW FROM ABOVE
+./render -i flat256.obj -h hm256_2.bmp -n norm256_2.bmp -p 2
+
+FAULT POINTS
+./render -i flat256.obj -h hm256_2.bmp -n norm256_2.bmp -p 8
